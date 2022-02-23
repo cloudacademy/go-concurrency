@@ -1,4 +1,4 @@
-all: goroutines waitgroups channels mutext
+all: goroutines waitgroups channels mutex
 
 channels: buffers close range select timeout pingpong
 
