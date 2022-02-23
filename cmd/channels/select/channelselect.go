@@ -1,47 +1,34 @@
 package main
 
-import (
-	"fmt"
-	"math/rand"
-	"time"
-)
-
-func pause() {
-	n := rand.Intn(5) // n will be between 0 and 5
-	time.Sleep(time.Duration(n) * time.Second)
-}
-
-func func1(c chan<- string) {
-	for {
-		pause()
-		c <- "cloud"
-	}
-}
-
-func func2(c chan<- string) {
-	for {
-		pause()
-		c <- "academy"
-	}
-}
+import "fmt"
 
 func main() {
-	fmt.Printf("\nChannel Select Example...\n")
+	odds := make(chan int)
+	evens := make(chan int)
+	done := make(chan int)
 
-	rand.Seed(time.Now().Unix())
+	go func(ch, done chan int, data []int) {
+		for _, v := range data {
+			ch <- v
+		}
+		done <- 1
+	}(odds, done, []int{1, 3, 5, 7, 9})
 
-	chan1 := make(chan string)
-	chan2 := make(chan string)
+	go func(ch, done chan int, data []int) {
+		for _, v := range data {
+			ch <- v
+		}
+		done <- 1
+	}(evens, done, []int{2, 4, 6, 8, 10})
 
-	go func1(chan1)
-	go func2(chan2)
-
-	for {
+	for n := 2; n > 0; {
 		select {
-		case msg1 := <-chan1:
-			fmt.Println(msg1)
-		case msg2 := <-chan2:
-			fmt.Println(msg2)
+		case num := <-odds:
+			fmt.Printf("odd number: %d\n", num)
+		case num := <-evens:
+			fmt.Printf("even number: %d\n", num)
+		case <-done:
+			n--
 		}
 	}
 }
