@@ -9,7 +9,7 @@ func main() {
 
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
-	go func(ch, done chan int, data []int) {
+	go func(ch chan int, done chan int, data []int) {
 		for _, n := range data {
 			if n%2 != 0 {
 				ch <- n
@@ -18,7 +18,7 @@ func main() {
 		done <- 1
 	}(odds, done, numbers)
 
-	go func(ch, done chan int, data []int) {
+	go func(ch chan int, done chan int, data []int) {
 		for _, n := range data {
 			if n%2 == 0 {
 				ch <- n
