@@ -7,19 +7,25 @@ func main() {
 	evens := make(chan int)
 	done := make(chan int)
 
-	go func(ch, done chan int, data []int) {
-		for _, v := range data {
-			ch <- v
-		}
-		done <- 1
-	}(odds, done, []int{1, 3, 5, 7, 9})
+	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
 	go func(ch, done chan int, data []int) {
-		for _, v := range data {
-			ch <- v
+		for _, n := range data {
+			if n%2 != 0 {
+				ch <- n
+			}
 		}
 		done <- 1
-	}(evens, done, []int{2, 4, 6, 8, 10})
+	}(odds, done, numbers)
+
+	go func(ch, done chan int, data []int) {
+		for _, n := range data {
+			if n%2 == 0 {
+				ch <- n
+			}
+		}
+		done <- 1
+	}(evens, done, numbers)
 
 	for n := 2; n > 0; {
 		select {
